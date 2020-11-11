@@ -95,9 +95,12 @@ mainWithArgs args = do
 
   eventChan <- B.newBChan 32
 
+  let mkVty = V.mkVty =<< V.standardIOConfig
+  initialVty <- mkVty
+
   m  <- newManager tlsManagerSettings
   ut <- genUpdateEventTUI eventChan
-  st <- customMain (V.mkVty defaultConfig)
+  st <- customMain initialVty mkVty
                    (Just eventChan) app (initState [] (argDstDir args) m (argNumThreads args))
 
   putStrLn "Exiting..."

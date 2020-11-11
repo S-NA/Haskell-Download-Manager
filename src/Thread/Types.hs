@@ -12,13 +12,14 @@ data ThreadRunningState = Starting | Running | Finished | Paused | Stopping | St
 instance Monoid ThreadRunningState where
   mempty = Starting
 
-  mappend Starting x = x
-  mappend x Starting = x
-  mappend Running Paused = Paused
-  mappend Running Finished = Finished
-  mappend Running Stopping = Stopping
-  mappend Stopping Stopped = Stopped
-  mappend x _ = x
+instance Semigroup ThreadRunningState where
+  Starting <> x = x
+  x <> Starting = x
+  Running <> Paused = Paused
+  Running <> Finished = Finished
+  Running <> Stopping = Stopping
+  Stopping <> Stopped = Stopped
+  x <> _ = x
 
 type ThreadStatus = Either DownloadError ThreadRunningState
 
